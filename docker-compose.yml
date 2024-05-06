@@ -1,0 +1,15 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    #command: allowPublicKeyRetrival=true
+    environment:
+      MYSQL_USER: usuario
+      MYSQL_PASSWORD: senha
+      MYSQL_DATABASE: banco-de-dados
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - "3306:3306"
+
+#mudar allowPublicKeyRetrival e useSSL para True no DBeaver e na string de conexão
