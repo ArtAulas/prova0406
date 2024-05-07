@@ -1,8 +1,8 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 #jdbc:mysql://localhost:3306/banco-de-dados?allowPublicKeyRetrieval=true&useSSL=false
 #^MUITO provavelmente essa
 
-MYSQL_URL="jdbc:mysql://root:example@localhost:3306/banco-de-dados?allowPublicKeyRetrieval=true"
+MYSQL_URL="mysql://root:example@localhost:3306/banco-de-dados"
 #ArgumentError: Could not parse SQLAlchemy URL from string
 #Base=declarative_base()
 engine=create_engine(MYSQL_URL)
@@ -15,11 +15,10 @@ engine=create_engine(MYSQL_URL)
 
 def criar_user():
     with engine.connect() as con:
-        query='''
-                create table User(
-                    id tinyint,
-                    name varchar(10)
-                )'''
+        query=text('''create table User(
+                   id tinyint,
+                   name varchar(10)
+                   )''')
         con.execute(query)
 
 
