@@ -32,6 +32,3 @@ def delete_user():
 
 def update_user():
     pass
-
-get_all_user()
-get_user_by_id(1)
