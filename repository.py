@@ -1,7 +1,7 @@
 from sqlalchemy import text
 from config_db import engine as e
 #e.connect()
-#não ha a anecessidade de ser usuário
+#não há a necessidade de ser usuário
 #implementar get_db e BaseModel
 
 def get_all_user():
