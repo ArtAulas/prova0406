@@ -24,7 +24,7 @@ def get_db():
 class Usuario(Base):
     __tablename__='usuarios'
     id=Column('id',SmallInteger, primary_key=True)
-    nome=Column('nome',String(16), nullable=False)
+    nome=Column('nome',String(16))
 
 #schemas-utilizar para response e request
 class UsuarioResponse(BaseModel):
@@ -34,5 +34,6 @@ class UsuarioResponse(BaseModel):
     class Config:
         from_attributes=True
 
-#class UsuarioRequest(BaseModel):
-#    nome:str
+class UsuarioRequest(BaseModel):
+    id:int
+    nome:str
