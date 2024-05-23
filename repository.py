@@ -1,6 +1,8 @@
 from sqlalchemy import text
 from config_db import engine as e
 #e.connect()
+#não há a necessidade de ser usuário
+#implementar get_db e BaseModel
 
 def get_all_user():
     with e.connect() as con:
