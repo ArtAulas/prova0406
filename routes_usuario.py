@@ -1,9 +1,9 @@
 #CRUD- CREATE READ UPDATE DELETE
 from fastapi import APIRouter, Depends, Response
-from config_db import UsuarioRequest, UsuarioResponse, Usuario
+from db_user import UsuarioRequest, UsuarioResponse, Usuario
 from sqlalchemy.orm import Session
 
-from config_db import Base, engine, get_db
+from db_config import Base, engine, get_db
 Base.metadata.create_all(bind=engine)
 
 router=APIRouter(prefix='/usuarios')
@@ -21,7 +21,14 @@ def buscarId(id, db:Session=Depends(get_db)):
     usuario_on_db=db.query(Usuario).filter(Usuario.id==id).first()
     if usuario_on_db is None:
         return Response(content='Usuário não encontrado',status_code=404)
-    return UsuarioResponse.from_orm(usuario_on_db)
+    return UsuarioResponse.model_validate(usuario_on_db)#novo modo, testar
+
+@router.get("/buscar2/{id}")#Read
+def buscarId2(id, db:Session=Depends(get_db)):
+    usuario_on_db=db.query(Usuario).filter(Usuario.id==id).first()
+    if usuario_on_db is None:
+        return Response(content='Usuário não encontrado',status_code=404)
+    return UsuarioResponse.from_orm(usuario_on_db)#novo modo, testar
 
 @router.delete("/apagar/{id}")#Delete
 def apagarId(id, db:Session=Depends(get_db)):
@@ -33,7 +40,14 @@ def apagarId(id, db:Session=Depends(get_db)):
 
 @router.post("/inserir")#Create
 def inserir(request:UsuarioRequest, db:Session=Depends(get_db)):
-    rDici=request.dict()
+    rDici=request.model_dump()#novo modo, testar
+    db.add(Usuario(**rDici))
+    db.commit()
+    return rDici
+
+@router.post("/inserir2")#Create
+def inserir2(request:UsuarioRequest, db:Session=Depends(get_db)):
+    rDici=request.dict()#novo modo, testar
     db.add(Usuario(**rDici))
     db.commit()
     return rDici
