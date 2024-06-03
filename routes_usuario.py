@@ -13,22 +13,23 @@ def buscar(db:Session=Depends(get_db)):
     usuarios_on_db=db.query(Usuario).all()
     lista=[]
     for usuario_unico in usuarios_on_db:
-        lista.append(UsuarioResponse.from_orm(usuario_unico))
+        lista.append(UsuarioResponse.model_validate(usuario_unico))
     return lista
 
 @router.get("/buscar/{id}")#Read
-def buscarId(id, db:Session=Depends(get_db)):
+def buscarId(id:int, db:Session=Depends(get_db)):
     usuario_on_db=db.query(Usuario).filter(Usuario.id==id).first()
     if usuario_on_db is None:
         return Response(content='Usuário não encontrado',status_code=404)
-    return UsuarioResponse.model_validate(usuario_on_db)#novo modo, testar
+    return UsuarioResponse.model_validate(usuario_on_db)
 
-@router.get("/buscar2/{id}")#Read
-def buscarId2(id, db:Session=Depends(get_db)):
-    usuario_on_db=db.query(Usuario).filter(Usuario.id==id).first()
-    if usuario_on_db is None:
-        return Response(content='Usuário não encontrado',status_code=404)
-    return UsuarioResponse.from_orm(usuario_on_db)#novo modo, testar
+@router.get("/buscar/nome/{username}")#Read
+def buscarNome(username:str, db:Session=Depends(get_db)):
+    usuarios_on_db=db.query(Usuario).filter(Usuario.nome==username).all()
+    lista=[]
+    for usuario_unico in usuarios_on_db:
+        lista.append(UsuarioResponse.model_validate(usuario_unico))
+    return lista
 
 @router.delete("/apagar/{id}")#Delete
 def apagarId(id, db:Session=Depends(get_db)):
@@ -40,14 +41,7 @@ def apagarId(id, db:Session=Depends(get_db)):
 
 @router.post("/inserir")#Create
 def inserir(request:UsuarioRequest, db:Session=Depends(get_db)):
-    rDici=request.model_dump()#novo modo, testar
-    db.add(Usuario(**rDici))
-    db.commit()
-    return rDici
-
-@router.post("/inserir2")#Create
-def inserir2(request:UsuarioRequest, db:Session=Depends(get_db)):
-    rDici=request.dict()#novo modo, testar
+    rDici=request.model_dump()
     db.add(Usuario(**rDici))
     db.commit()
     return rDici
@@ -57,7 +51,7 @@ def atualizarId(id, request:UsuarioRequest, db:Session=Depends(get_db)):
     usuario_antigo=db.query(Usuario).filter(Usuario.id==id).first()
     if usuario_antigo is None:
         return Response(content='Usuário não encontrado',status_code=404)
-    db.merge(Usuario(**request.dict()))
+    db.merge(Usuario(id=id, **request.model_dump()))
     db.commit()
     usuario_novo=db.query(Usuario).filter(Usuario.id==id).first()
     return usuario_novo
