@@ -1,8 +1,19 @@
 #requests
 from fastapi import FastAPI
-from routes_usuario import router as router1
+from fastapi.middleware.cors import CORSMiddleware
+from routes_tarefas import router as router1
 
 app=FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/helloworld")
 def helloworld():
